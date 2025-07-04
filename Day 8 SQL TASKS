@@ -1,0 +1,56 @@
+I have used the already existing tables employees and department
+
+Procedure and functions
+
+
+delimiter //
+
+create procedure calculate_bonus(
+    in emp_id_in int,
+    out bonus_out decimal(10,2)
+)
+begin
+    declare emp_salary int;
+    declare emp_dept varchar(50);
+
+     select emp_salary, emp_dept 
+    into emp_salary, emp_dept 
+    from employees 
+    where emp_id = emp_id_in;
+
+ 
+    if emp_dept = 'IT' then
+        set bonus_out = emp_salary * 0.10;
+    elseif emp_dept = 'HR' then
+        set bonus_out = emp_salary * 0.08;
+    else
+        set bonus_out = emp_salary * 0.05;
+    end if;
+end;
+//
+
+delimiter ;    
+
+to run the proc
+
+call calculate_bonus(2, @bonus);
+select @bonus;
+
+Function
+
+delimiter //
+
+create function get_experience(doj date) 
+returns int
+deterministic
+begin
+    declare exp int;
+    set exp = year(curdate()) - year(doj);
+    return exp;
+end;
+//
+
+to run the function
+select emp_name, doj, get_experience(doj) as years_experience
+from employees;
+
